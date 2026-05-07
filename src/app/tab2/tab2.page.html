@@ -1,43 +1,58 @@
 <ion-header>
   <ion-toolbar color="secondary">
-    <ion-title>Tareas</ion-title>
+    <ion-title>Mis Tareas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div class="tasks-header">
-    <h2>Tu espacio de trabajo</h2>
-    <p>Organiza lo importante del sprint y manten el foco en lo que toca hoy.</p>
+
+<ion-content>
+  <ion-searchbar
+    placeholder="Buscar tarea..."
+    debounce="250"
+    (ionInput)="filterTasks($event)"
+  ></ion-searchbar>
+
+  <ion-segment [(ngModel)]="selectedFilter" (ionChange)="applyFilter()">
+    <ion-segment-button value="all">
+      <ion-label>Todas</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="pending">
+      <ion-label>Pendientes</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="done">
+      <ion-label>Hechas</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-list *ngIf="filteredTasks.length > 0">
+    @for (task of filteredTasks; track task.id) {
+      <ion-item button detail="true" (click)="goToDetail(task.id)">
+        <ion-checkbox
+          slot="start"
+          [(ngModel)]="task.completed"
+          (click)="$event.stopPropagation()"
+          (ngModelChange)="onToggle(task)"
+        ></ion-checkbox>
+        <ion-label [class.completed]="task.completed">
+          <h2>{{ task.title }}</h2>
+          <p>{{ task.description || 'Sin descripcion' }}</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="getPriorityColor(task)">
+          {{ task.priority }}
+        </ion-badge>
+      </ion-item>
+    }
+  </ion-list>
+
+  <div *ngIf="filteredTasks.length === 0" class="empty-state ion-text-center ion-padding">
+    <ion-icon name="clipboard-outline" size="large" color="medium"></ion-icon>
+    <h3>No hay tareas</h3>
+    <p>Crea tu primera tarea con el boton +</p>
   </div>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Resumen rapido</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content class="task-summary">
-      <div>
-        <span class="summary-number">3</span>
-        <span class="summary-label">activas</span>
-      </div>
-      <div>
-        <span class="summary-number">1</span>
-        <span class="summary-label">vence hoy</span>
-      </div>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-list class="task-list">
-    <ion-list-header>
-      <ion-label>Mis tareas</ion-label>
-    </ion-list-header>
-
-    <ion-item *ngFor="let task of taskItems">
-      <ion-label>
-        <h3>{{ task.title }}</h3>
-        <p>{{ task.due }}</p>
-      </ion-label>
-      <ion-badge [color]="task.color" slot="end">{{ task.status }}</ion-badge>
-    </ion-item>
-  </ion-list>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="openAddModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

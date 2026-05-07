@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">Cancelar</ion-button>
+    </ion-buttons>
+    <ion-title>Nueva tarea</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [disabled]="!canSave" (click)="saveTask()">Guardar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-input
+      label="Titulo"
+      labelPlacement="stacked"
+      placeholder="Ej. Terminar el sprint"
+      [(ngModel)]="form.title"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-textarea
+      label="Descripcion"
+      labelPlacement="stacked"
+      placeholder="Describe la tarea"
+      autoGrow="true"
+      [(ngModel)]="form.description"
+    ></ion-textarea>
+  </ion-item>
+
+  <ion-item>
+    <ion-select
+      label="Prioridad"
+      labelPlacement="stacked"
+      interface="popover"
+      [(ngModel)]="form.priority"
+    >
+      <ion-select-option value="alta">Alta</ion-select-option>
+      <ion-select-option value="media">Media</ion-select-option>
+      <ion-select-option value="baja">Baja</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      label="Categoria"
+      labelPlacement="stacked"
+      placeholder="Ej. Estudio"
+      [(ngModel)]="form.category"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item lines="none">
+    <ion-checkbox slot="start" [(ngModel)]="form.completed"></ion-checkbox>
+    <ion-label>Marcar como completada desde el alta</ion-label>
+  </ion-item>
+</ion-content>

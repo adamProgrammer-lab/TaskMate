@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab2"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="deleteTask()" color="danger">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" *ngIf="task; else taskNotFound">
+  <ion-badge [color]="getPriorityColor(task)">
+    {{ task.priority | uppercase }}
+  </ion-badge>
+  <h1 class="detail-title ion-margin-top">{{ task.title }}</h1>
+  <p class="detail-description">{{ task.description || 'Sin descripcion' }}</p>
+  <ion-note>Creada el {{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</ion-note>
+
+  <ion-button
+    expand="block"
+    class="ion-margin-top"
+    [color]="task.completed ? 'medium' : 'success'"
+    (click)="toggleComplete()"
+  >
+    <ion-icon [name]="task.completed ? 'refresh' : 'checkmark'" slot="start"></ion-icon>
+    {{ task.completed ? 'Marcar como pendiente' : 'Marcar como completada' }}
+  </ion-button>
+</ion-content>
+
+<ng-template #taskNotFound>
+  <ion-content class="ion-padding">
+    <div class="empty-detail">
+      <h2>Tarea no encontrada</h2>
+      <p>La tarea que intentas abrir ya no esta disponible.</p>
+      <ion-button routerLink="/tabs/tab2">Volver a tareas</ion-button>
+    </div>
+  </ion-content>
+</ng-template>

@@ -1,0 +1,16 @@
+.detail-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.detail-description {
+  color: var(--ion-color-medium-shade);
+  line-height: 1.5;
+}
+
+.empty-detail {
+  display: grid;
+  gap: 12px;
+  padding-top: 32px;
+  text-align: center;
+}

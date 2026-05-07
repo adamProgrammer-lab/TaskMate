@@ -1,42 +1,29 @@
-.tasks-header {
-  padding: 8px 0 12px;
-
-  h2 {
-    font-size: 1.45rem;
-    font-weight: 700;
-    margin: 0 0 6px;
-  }
-
-  p {
-    color: var(--ion-color-medium);
-    margin: 0;
-  }
+.completed h2,
+.completed p {
+  opacity: 0.65;
+  text-decoration: line-through;
 }
 
-.task-summary {
-  display: flex;
-  gap: 16px;
-  justify-content: space-between;
-
-  div {
-    display: flex;
-    flex-direction: column;
-  }
+.empty-state {
+  display: grid;
+  gap: 10px;
+  min-height: 40vh;
+  place-content: center;
 }
 
-.summary-number {
-  color: var(--ion-color-secondary);
-  font-size: 1.8rem;
-  font-weight: 700;
+ion-searchbar {
+  padding: 12px 12px 4px;
 }
 
-.summary-label {
-  color: var(--ion-color-medium);
-  font-size: 0.85rem;
+ion-segment {
+  margin: 0 12px 12px;
 }
 
-.task-list {
-  border-radius: 12px;
-  margin-top: 16px;
-  overflow: hidden;
+ion-list {
+  background: transparent;
+}
+
+ion-item {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
 }

@@ -7,7 +7,7 @@
 <ion-content class="ion-padding">
   <div class="welcome-section">
     <h2>Hola, Developer!</h2>
-    <p>Tienes <strong>0 tareas</strong> pendientes hoy.</p>
+    <p>Tienes <strong>{{ stats.pending }} tareas</strong> pendientes hoy.</p>
   </div>
 
   <ion-card>
@@ -19,11 +19,11 @@
       <ion-grid>
         <ion-row>
           <ion-col class="stat-col">
-            <div class="stat-number">0</div>
+            <div class="stat-number">{{ stats.pending }}</div>
             <div class="stat-label">Pendientes</div>
           </ion-col>
           <ion-col class="stat-col">
-            <div class="stat-number">0</div>
+            <div class="stat-number">{{ stats.completed }}</div>
             <div class="stat-label">Completadas</div>
           </ion-col>
         </ion-row>
@@ -31,9 +31,9 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-button expand="block" color="primary" class="ion-margin-top">
+  <ion-button expand="block" color="primary" class="ion-margin-top" (click)="openAddModal()">
     <ion-icon name="add" slot="start"></ion-icon>
-    Nueva Tarea
+    Nueva tarea
   </ion-button>
 
   <ion-card class="progress-card ion-margin-top">
@@ -62,26 +62,25 @@
 
   <ion-list *ngIf="activeSection === 'tasks'" class="recent-tasks ion-margin-top">
     <ion-list-header>
-      <ion-label>Tareas recientes</ion-label>
+      <ion-label>Prioridad alta</ion-label>
     </ion-list-header>
-    <ion-item>
-      <ion-label>
-        <h3>Revisar planificacion semanal</h3>
-        <p>Hoy</p>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        <h3>Preparar entrega de Ionic</h3>
-        <p>Manana</p>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        <h3>Actualizar perfil de usuario</h3>
-        <p>Esta semana</p>
-      </ion-label>
-    </ion-item>
+
+    @for (task of priorityTasks; track task.id) {
+      <ion-item button detail="true" (click)="goToDetail(task.id)">
+        <ion-label>
+          <h3>{{ task.title }}</h3>
+          <p>{{ task.description || 'Sin descripcion' }}</p>
+        </ion-label>
+        <ion-badge slot="end" color="danger">{{ task.priority }}</ion-badge>
+      </ion-item>
+    } @empty {
+      <ion-item>
+        <ion-label>
+          <h3>Sin tareas urgentes</h3>
+          <p>Buen trabajo. No hay tareas de prioridad alta ahora mismo.</p>
+        </ion-label>
+      </ion-item>
+    }
   </ion-list>
 
   <ion-card *ngIf="activeSection === 'stats'" class="ion-margin-top">
@@ -93,12 +92,12 @@
       <ion-grid>
         <ion-row>
           <ion-col class="stat-col">
-            <div class="stat-number">7</div>
-            <div class="stat-label">Tareas esta semana</div>
+            <div class="stat-number">{{ stats.total }}</div>
+            <div class="stat-label">Total</div>
           </ion-col>
           <ion-col class="stat-col">
-            <div class="stat-number">82%</div>
-            <div class="stat-label">Productividad</div>
+            <div class="stat-number">{{ completionRate }}%</div>
+            <div class="stat-label">Completado</div>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -108,14 +107,14 @@
   <ion-list *ngIf="activeSection === 'stats'" class="recent-tasks ion-margin-top">
     <ion-item>
       <ion-label>
-        <h3>Mejor dia</h3>
-        <p>Miercoles</p>
+        <h3>Ritmo actual</h3>
+        <p>{{ stats.completed }} de {{ stats.total }} tareas terminadas.</p>
       </ion-label>
     </ion-item>
     <ion-item>
       <ion-label>
-        <h3>Racha actual</h3>
-        <p>3 dias completando tareas</p>
+        <h3>Foco del dia</h3>
+        <p>{{ stats.pending }} tareas necesitan tu atencion.</p>
       </ion-label>
     </ion-item>
   </ion-list>
