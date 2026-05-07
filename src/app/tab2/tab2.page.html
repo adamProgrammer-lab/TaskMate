@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-title>Tareas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="tasks-header">
+    <h2>Tu espacio de trabajo</h2>
+    <p>Organiza lo importante del sprint y manten el foco en lo que toca hoy.</p>
+  </div>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Resumen rapido</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content class="task-summary">
+      <div>
+        <span class="summary-number">3</span>
+        <span class="summary-label">activas</span>
+      </div>
+      <div>
+        <span class="summary-number">1</span>
+        <span class="summary-label">vence hoy</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list class="task-list">
+    <ion-list-header>
+      <ion-label>Mis tareas</ion-label>
+    </ion-list-header>
+
+    <ion-item *ngFor="let task of taskItems">
+      <ion-label>
+        <h3>{{ task.title }}</h3>
+        <p>{{ task.due }}</p>
+      </ion-label>
+      <ion-badge [color]="task.color" slot="end">{{ task.status }}</ion-badge>
+    </ion-item>
+  </ion-list>
+</ion-content>

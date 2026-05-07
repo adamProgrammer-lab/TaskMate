@@ -1,0 +1,51 @@
+.welcome-section {
+  padding: 16px 0;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 0;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+  }
+}
+
+.home-segment {
+  background: rgba(var(--ion-color-primary-rgb), 0.08);
+  border-radius: 14px;
+  padding: 4px;
+}
+
+.progress-card ion-progress-bar {
+  border-radius: 999px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.progress-copy {
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+  margin: 12px 0 0;
+}
+
+.stat-col {
+  text-align: center;
+
+  .stat-number {
+    color: var(--ion-color-primary);
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .stat-label {
+    color: var(--ion-color-medium);
+    font-size: 0.8rem;
+  }
+}
+
+.recent-tasks {
+  border-radius: 12px;
+  overflow: hidden;
+}

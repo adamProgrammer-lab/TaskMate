@@ -1,0 +1,42 @@
+.tasks-header {
+  padding: 8px 0 12px;
+
+  h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
+.task-summary {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.summary-number {
+  color: var(--ion-color-secondary);
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.summary-label {
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+}
+
+.task-list {
+  border-radius: 12px;
+  margin-top: 16px;
+  overflow: hidden;
+}

@@ -1,0 +1,122 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>TaskMate</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="welcome-section">
+    <h2>Hola, Developer!</h2>
+    <p>Tienes <strong>0 tareas</strong> pendientes hoy.</p>
+  </div>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Resumen del dia</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col class="stat-col">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Pendientes</div>
+          </ion-col>
+          <ion-col class="stat-col">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Completadas</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="primary" class="ion-margin-top">
+    <ion-icon name="add" slot="start"></ion-icon>
+    Nueva Tarea
+  </ion-button>
+
+  <ion-card class="progress-card ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>Mi progreso</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-progress-bar value="0.125"></ion-progress-bar>
+      <p class="progress-copy">Sprint completado: 1 de 8.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-segment
+    class="home-segment ion-margin-top"
+    [value]="activeSection"
+    (ionChange)="onSegmentChange($event)"
+  >
+    <ion-segment-button value="tasks">
+      <ion-label>Mis Tareas</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="stats">
+      <ion-label>Estadisticas</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-list *ngIf="activeSection === 'tasks'" class="recent-tasks ion-margin-top">
+    <ion-list-header>
+      <ion-label>Tareas recientes</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-label>
+        <h3>Revisar planificacion semanal</h3>
+        <p>Hoy</p>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <h3>Preparar entrega de Ionic</h3>
+        <p>Manana</p>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <h3>Actualizar perfil de usuario</h3>
+        <p>Esta semana</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-card *ngIf="activeSection === 'stats'" class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>Estadisticas</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col class="stat-col">
+            <div class="stat-number">7</div>
+            <div class="stat-label">Tareas esta semana</div>
+          </ion-col>
+          <ion-col class="stat-col">
+            <div class="stat-number">82%</div>
+            <div class="stat-label">Productividad</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="activeSection === 'stats'" class="recent-tasks ion-margin-top">
+    <ion-item>
+      <ion-label>
+        <h3>Mejor dia</h3>
+        <p>Miercoles</p>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <h3>Racha actual</h3>
+        <p>3 dias completando tareas</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
