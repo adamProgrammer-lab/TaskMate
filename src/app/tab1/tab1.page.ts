@@ -23,8 +23,9 @@ import {
   IonSegmentButton,
   IonTitle,
   IonToolbar,
+  ModalController,
+  ToastController,
 } from '@ionic/angular/standalone';
-import { ModalController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 import { Task } from '../models/task.model';

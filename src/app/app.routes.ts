@@ -7,7 +7,12 @@ export const routes: Routes = [
       import('./pages/task-detail/task-detail.page').then((m) => m.TaskDetailPage),
   },
   {
-    path: '',
+    path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+  },
+  {
+    path: '',
+    redirectTo: '/tabs/tab1',
+    pathMatch: 'full',
   },
 ];

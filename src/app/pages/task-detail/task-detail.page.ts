@@ -6,6 +6,7 @@ import {
   IonBadge,
   IonButton,
   IonButtons,
+  AlertController,
   IonContent,
   IonHeader,
   IonIcon,
@@ -13,7 +14,6 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { AlertController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { checkmark, refresh, trash } from 'ionicons/icons';
 import { Task } from '../../models/task.model';

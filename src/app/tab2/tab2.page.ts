@@ -18,8 +18,9 @@ import {
   IonSegmentButton,
   IonTitle,
   IonToolbar,
+  ModalController,
+  ToastController,
 } from '@ionic/angular/standalone';
-import { ModalController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { add, clipboardOutline } from 'ionicons/icons';
 import { AddTaskModalComponent } from '../components/add-task-modal/add-task-modal.component';

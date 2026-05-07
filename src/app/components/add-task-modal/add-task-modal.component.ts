@@ -14,8 +14,8 @@ import {
   IonTextarea,
   IonTitle,
   IonToolbar,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { ModalController } from '@ionic/angular';
 import { Task } from '../../models/task.model';
 import { TaskService } from '../../services/task.service';
 

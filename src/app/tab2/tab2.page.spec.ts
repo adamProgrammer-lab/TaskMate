@@ -2,7 +2,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular/standalone';
 
 import { Tab2Page } from './tab2.page';
 import { TaskService } from '../services/task.service';
