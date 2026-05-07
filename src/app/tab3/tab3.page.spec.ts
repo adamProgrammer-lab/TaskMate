@@ -1,14 +1,31 @@
 /// <reference types="jasmine" />
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AlertController, ToastController } from '@ionic/angular/standalone';
 
 import { Tab3Page } from './tab3.page';
+import { TaskService } from '../services/task.service';
 
 describe('Tab3Page', () => {
   let component: Tab3Page;
   let fixture: ComponentFixture<Tab3Page>;
 
   beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Tab3Page],
+      providers: [
+        TaskService,
+        {
+          provide: AlertController,
+          useValue: { create: jasmine.createSpy('create') },
+        },
+        {
+          provide: ToastController,
+          useValue: { create: jasmine.createSpy('create') },
+        },
+      ],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(Tab3Page);
     component = fixture.componentInstance;
     fixture.detectChanges();

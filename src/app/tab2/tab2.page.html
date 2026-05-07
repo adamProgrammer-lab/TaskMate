@@ -4,15 +4,19 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-searchbar
     placeholder="Buscar tarea..."
     debounce="250"
+    [value]="searchQuery"
     (ionInput)="filterTasks($event)"
   ></ion-searchbar>
 
-  <ion-segment [(ngModel)]="selectedFilter" (ionChange)="applyFilter()">
+  <ion-segment [(ngModel)]="selectedStatus" (ionChange)="applyFilter()">
     <ion-segment-button value="all">
       <ion-label>Todas</ion-label>
     </ion-segment-button>
@@ -23,6 +27,28 @@
       <ion-label>Hechas</ion-label>
     </ion-segment-button>
   </ion-segment>
+
+  <div class="priority-title ion-padding-horizontal">Filtrar por prioridad</div>
+  <ion-segment class="priority-segment" [(ngModel)]="selectedPriority" (ionChange)="applyFilter()">
+    <ion-segment-button value="all">
+      <ion-label>Todas</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="alta">
+      <ion-label>Alta</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="media">
+      <ion-label>Media</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="baja">
+      <ion-label>Baja</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div class="filter-actions ion-padding-horizontal">
+    <ion-button fill="clear" size="small" (click)="clearFilters()">
+      Limpiar filtros
+    </ion-button>
+  </div>
 
   <ion-list *ngIf="filteredTasks.length > 0">
     @for (task of filteredTasks; track task.id) {
@@ -47,7 +73,7 @@
   <div *ngIf="filteredTasks.length === 0" class="empty-state ion-text-center ion-padding">
     <ion-icon name="clipboard-outline" size="large" color="medium"></ion-icon>
     <h3>No hay tareas</h3>
-    <p>Crea tu primera tarea con el boton +</p>
+    <p>Prueba a limpiar filtros o crea una nueva tarea con el boton +.</p>
   </div>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

@@ -3,3 +3,9 @@ ion-item {
   --inner-padding-end: 0;
   margin-bottom: 12px;
 }
+
+.form-error {
+  display: block;
+  margin: -4px 0 10px;
+  padding-inline: 4px;
+}

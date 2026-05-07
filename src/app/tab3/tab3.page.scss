@@ -26,7 +26,7 @@
   height: 96px;
 }
 
-ion-card-content {
+.tech-stack {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -35,4 +35,14 @@ ion-card-content {
 ion-list {
   border-radius: 12px;
   overflow: hidden;
+}
+
+.storage-card ion-card-content {
+  display: grid;
+  gap: 12px;
+}
+
+.storage-card p {
+  color: var(--ion-color-medium);
+  margin: 0;
 }

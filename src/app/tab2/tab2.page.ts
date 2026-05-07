@@ -4,6 +4,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   IonBadge,
+  IonButton,
   IonCheckbox,
   IonContent,
   IonFab,
@@ -13,6 +14,8 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonRefresher,
+  IonRefresherContent,
   IonSearchbar,
   IonSegment,
   IonSegmentButton,
@@ -35,6 +38,7 @@ import { TaskService } from '../services/task.service';
     FormsModule,
     NgIf,
     IonBadge,
+    IonButton,
     IonCheckbox,
     IonContent,
     IonFab,
@@ -44,6 +48,8 @@ import { TaskService } from '../services/task.service';
     IonItem,
     IonLabel,
     IonList,
+    IonRefresher,
+    IonRefresherContent,
     IonSearchbar,
     IonSegment,
     IonSegmentButton,
@@ -57,9 +63,15 @@ export class Tab2Page {
   private readonly taskService = inject(TaskService);
   private readonly toastController = inject(ToastController);
 
+  /** Copia local del listado completo recuperado desde el servicio. */
   tasks: Task[] = [];
+  /** Resultado visible tras aplicar filtros y busqueda. */
   filteredTasks: Task[] = [];
-  selectedFilter: 'all' | 'pending' | 'done' = 'all';
+  /** Filtro principal para separar tareas pendientes, hechas o todas. */
+  selectedStatus: 'all' | 'pending' | 'done' = 'all';
+  /** Filtro secundario para prioridad. */
+  selectedPriority: 'all' | Task['priority'] = 'all';
+  /** Texto libre escrito en la barra de busqueda. */
   searchQuery = '';
 
   /** Registra los iconos de la lista y del boton flotante de tareas. */
@@ -78,14 +90,18 @@ export class Tab2Page {
     this.applyFilter();
   }
 
-  /** Aplica el filtro del segment junto con la busqueda escrita. */
+  /** Aplica de forma conjunta estado, prioridad y texto de busqueda. */
   applyFilter(): void {
     let nextTasks = [...this.tasks];
 
-    if (this.selectedFilter === 'pending') {
+    if (this.selectedStatus === 'pending') {
       nextTasks = nextTasks.filter((task) => !task.completed);
-    } else if (this.selectedFilter === 'done') {
+    } else if (this.selectedStatus === 'done') {
       nextTasks = nextTasks.filter((task) => task.completed);
+    }
+
+    if (this.selectedPriority !== 'all') {
+      nextTasks = nextTasks.filter((task) => task.priority === this.selectedPriority);
     }
 
     if (this.searchQuery) {
@@ -103,6 +119,14 @@ export class Tab2Page {
     }
 
     this.filteredTasks = nextTasks;
+  }
+
+  /** Restablece todos los filtros visuales del listado. */
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.selectedStatus = 'all';
+    this.selectedPriority = 'all';
+    this.applyFilter();
   }
 
   /** Cambia el estado de una tarea y actualiza la lista visible. */
@@ -145,6 +169,12 @@ export class Tab2Page {
     }
 
     return 'warning';
+  }
+
+  /** Refresca manualmente la lista y cierra la animacion del refresher. */
+  doRefresh(event: CustomEvent): void {
+    this.loadTasks();
+    void (event.target as HTMLIonRefresherElement).complete();
   }
 
   /** Relee las tareas desde el servicio y mantiene el filtro actual. */

@@ -99,6 +99,15 @@ export class Tab1Page {
     return Math.round((this.stats.completed / this.stats.total) * 100);
   }
 
+  /** Devuelve el valor normalizado para la barra de progreso diaria. */
+  get completionProgress(): number {
+    if (this.stats.total === 0) {
+      return 0;
+    }
+
+    return this.stats.completed / this.stats.total;
+  }
+
   /** Cambia el contenido visible segun la opcion elegida en el segment. */
   onSegmentChange(event: CustomEvent): void {
     this.activeSection = event.detail.value === 'stats' ? 'stats' : 'tasks';
@@ -127,10 +136,18 @@ export class Tab1Page {
     void this.router.navigate(['/task-detail', id]);
   }
 
+  /** Lleva al usuario a la pestana con el listado completo de tareas. */
+  goToTasks(): void {
+    void this.router.navigate(['/tabs/tab2']);
+  }
+
   /** Recoge del servicio el resumen y las tareas prioritarias del Home. */
   private loadDashboard(): void {
     this.stats = this.taskService.getStats();
-    this.priorityTasks = this.taskService.getTasksByPriority('alta');
+    this.priorityTasks = this.taskService
+      .getTasksByPriority('alta')
+      .filter((task) => !task.completed)
+      .slice(0, 3);
   }
 
   /** Muestra una confirmacion breve tras crear una nueva tarea. */

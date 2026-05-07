@@ -19,6 +19,22 @@ ion-segment {
   margin: 0 12px 12px;
 }
 
+.priority-title {
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+.priority-segment {
+  margin-top: 0;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
 ion-list {
   background: transparent;
 }

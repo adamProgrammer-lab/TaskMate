@@ -7,27 +7,35 @@
 <ion-content class="ion-padding">
   <div class="welcome-section">
     <h2>Hola, Developer!</h2>
-    <p>Tienes <strong>{{ stats.pending }} tareas</strong> pendientes hoy.</p>
+    <p>Tienes <strong>{{ stats.pending }} tareas</strong> pendientes.</p>
   </div>
 
   <ion-card>
-    <ion-card-header>
-      <ion-card-title>Resumen del dia</ion-card-title>
-    </ion-card-header>
-
     <ion-card-content>
       <ion-grid>
         <ion-row>
           <ion-col class="stat-col">
-            <div class="stat-number">{{ stats.pending }}</div>
-            <div class="stat-label">Pendientes</div>
+            <div class="stat-number">{{ stats.total }}</div>
+            <div class="stat-label">Total</div>
           </ion-col>
           <ion-col class="stat-col">
-            <div class="stat-number">{{ stats.completed }}</div>
-            <div class="stat-label">Completadas</div>
+            <div class="stat-number success">{{ stats.completed }}</div>
+            <div class="stat-label">Hechas</div>
+          </ion-col>
+          <ion-col class="stat-col">
+            <div class="stat-number warning">{{ stats.pending }}</div>
+            <div class="stat-label">Pendientes</div>
           </ion-col>
         </ion-row>
       </ion-grid>
+
+      <div class="progress-block ion-margin-top">
+        <div class="progress-labels">
+          <small>Progreso del dia</small>
+          <small>{{ completionRate }}%</small>
+        </div>
+        <ion-progress-bar [value]="completionProgress" color="success"></ion-progress-bar>
+      </div>
     </ion-card-content>
   </ion-card>
 
@@ -36,24 +44,13 @@
     Nueva tarea
   </ion-button>
 
-  <ion-card class="progress-card ion-margin-top">
-    <ion-card-header>
-      <ion-card-title>Mi progreso</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-      <ion-progress-bar value="0.125"></ion-progress-bar>
-      <p class="progress-copy">Sprint completado: 1 de 8.</p>
-    </ion-card-content>
-  </ion-card>
-
   <ion-segment
     class="home-segment ion-margin-top"
     [value]="activeSection"
     (ionChange)="onSegmentChange($event)"
   >
     <ion-segment-button value="tasks">
-      <ion-label>Mis Tareas</ion-label>
+      <ion-label>Urgentes</ion-label>
     </ion-segment-button>
     <ion-segment-button value="stats">
       <ion-label>Estadisticas</ion-label>
@@ -62,7 +59,8 @@
 
   <ion-list *ngIf="activeSection === 'tasks'" class="recent-tasks ion-margin-top">
     <ion-list-header>
-      <ion-label>Prioridad alta</ion-label>
+      <ion-label>Tareas urgentes</ion-label>
+      <ion-button fill="clear" size="small" (click)="goToTasks()">Ver todas</ion-button>
     </ion-list-header>
 
     @for (task of priorityTasks; track task.id) {
@@ -77,7 +75,7 @@
       <ion-item>
         <ion-label>
           <h3>Sin tareas urgentes</h3>
-          <p>Buen trabajo. No hay tareas de prioridad alta ahora mismo.</p>
+          <p>Buen trabajo. No hay tareas de prioridad alta pendientes.</p>
         </ion-label>
       </ion-item>
     }
@@ -85,7 +83,7 @@
 
   <ion-card *ngIf="activeSection === 'stats'" class="ion-margin-top">
     <ion-card-header>
-      <ion-card-title>Estadisticas</ion-card-title>
+      <ion-card-title>Estadisticas de hoy</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
@@ -115,6 +113,12 @@
       <ion-label>
         <h3>Foco del dia</h3>
         <p>{{ stats.pending }} tareas necesitan tu atencion.</p>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <h3>Categoria sugerida</h3>
+        <p>Revisa primero las tareas de prioridad alta para desbloquear el resto.</p>
       </ion-label>
     </ion-item>
   </ion-list>

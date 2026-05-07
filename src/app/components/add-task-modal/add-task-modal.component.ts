@@ -1,14 +1,14 @@
-import { FormsModule } from '@angular/forms';
-import { Component, inject } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   IonButton,
   IonButtons,
-  IonCheckbox,
   IonContent,
   IonHeader,
   IonInput,
   IonItem,
-  IonLabel,
+  IonNote,
   IonSelect,
   IonSelectOption,
   IonTextarea,
@@ -26,15 +26,15 @@ type NewTaskPayload = Omit<Task, 'id' | 'createdAt'>;
   templateUrl: './add-task-modal.component.html',
   styleUrls: ['./add-task-modal.component.scss'],
   imports: [
-    FormsModule,
+    NgIf,
+    ReactiveFormsModule,
     IonButton,
     IonButtons,
-    IonCheckbox,
     IonContent,
     IonHeader,
     IonInput,
     IonItem,
-    IonLabel,
+    IonNote,
     IonSelect,
     IonSelectOption,
     IonTextarea,
@@ -42,22 +42,58 @@ type NewTaskPayload = Omit<Task, 'id' | 'createdAt'>;
     IonToolbar,
   ],
 })
-export class AddTaskModalComponent {
+export class AddTaskModalComponent implements OnInit {
+  private readonly formBuilder = inject(FormBuilder);
   private readonly modalController = inject(ModalController);
   private readonly taskService = inject(TaskService);
 
-  /** Estado local del formulario de alta de tarea. */
-  form: NewTaskPayload = {
-    title: '',
-    description: '',
-    priority: 'media',
-    completed: false,
-    category: 'General',
-  };
+  /** Formulario reactivo que centraliza valores y validaciones del modal. */
+  taskForm!: FormGroup;
 
-  /** Indica si el formulario tiene informacion minima para guardarse. */
-  get canSave(): boolean {
-    return this.form.title.trim().length > 0;
+  /** Inicializa el formulario reactivo con validaciones de negocio basicas. */
+  ngOnInit(): void {
+    this.taskForm = this.formBuilder.group({
+      title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      description: ['', [Validators.maxLength(500)]],
+      priority: ['media', Validators.required],
+      category: ['personal', Validators.required],
+    });
+  }
+
+  /** Devuelve el mensaje de error visible para el titulo. */
+  get titleError(): string {
+    const control = this.taskForm.get('title');
+
+    if (control?.hasError('required')) {
+      return 'El titulo es obligatorio';
+    }
+
+    if (control?.hasError('minlength')) {
+      return 'Minimo 3 caracteres';
+    }
+
+    if (control?.hasError('maxlength')) {
+      return 'Maximo 100 caracteres';
+    }
+
+    return '';
+  }
+
+  /** Devuelve el mensaje de error visible para la descripcion. */
+  get descriptionError(): string {
+    const control = this.taskForm.get('description');
+
+    if (control?.hasError('maxlength')) {
+      return 'Maximo 500 caracteres';
+    }
+
+    return '';
+  }
+
+  /** Comprueba si un campo ya debe mostrarse como invalido en la vista. */
+  isControlInvalid(controlName: string): boolean {
+    const control = this.taskForm.get(controlName);
+    return Boolean(control?.invalid && control?.touched);
   }
 
   /** Cierra el modal sin crear ninguna tarea. */
@@ -65,17 +101,20 @@ export class AddTaskModalComponent {
     void this.modalController.dismiss(undefined, 'cancel');
   }
 
-  /** Guarda la tarea en el servicio y devuelve el resultado al componente padre. */
+  /** Guarda la tarea validada en el servicio y devuelve el resultado al componente padre. */
   saveTask(): void {
-    if (!this.canSave) {
+    if (this.taskForm.invalid) {
+      this.taskForm.markAllAsTouched();
       return;
     }
 
+    const formValue = this.taskForm.getRawValue() as Omit<NewTaskPayload, 'completed'>;
     const task = this.taskService.addTask({
-      ...this.form,
-      title: this.form.title.trim(),
-      description: this.form.description?.trim() || undefined,
-      category: this.form.category?.trim() || undefined,
+      ...formValue,
+      title: formValue.title.trim(),
+      description: formValue.description?.trim() || undefined,
+      category: formValue.category?.trim() || undefined,
+      completed: false,
     });
 
     void this.modalController.dismiss(task, 'confirm');

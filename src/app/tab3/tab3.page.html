@@ -27,18 +27,20 @@
     </ion-card-header>
 
     <ion-card-content>
-      <ion-chip color="primary">
-        <ion-label>HTML/CSS</ion-label>
-      </ion-chip>
-      <ion-chip color="secondary">
-        <ion-label>JavaScript</ion-label>
-      </ion-chip>
-      <ion-chip color="tertiary">
-        <ion-label>Angular</ion-label>
-      </ion-chip>
-      <ion-chip>
-        <ion-label>Ionic</ion-label>
-      </ion-chip>
+      <div class="tech-stack">
+        <ion-chip color="primary">
+          <ion-label>HTML/CSS</ion-label>
+        </ion-chip>
+        <ion-chip color="secondary">
+          <ion-label>JavaScript</ion-label>
+        </ion-chip>
+        <ion-chip color="tertiary">
+          <ion-label>Angular</ion-label>
+        </ion-chip>
+        <ion-chip>
+          <ion-label>Ionic</ion-label>
+        </ion-chip>
+      </div>
     </ion-card-content>
   </ion-card>
 
@@ -75,4 +77,18 @@
       </ion-label>
     </ion-item>
   </ion-list>
+
+  <ion-card class="storage-card">
+    <ion-card-header>
+      <ion-card-subtitle>Datos locales</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>Las tareas se guardan en este dispositivo con localStorage.</p>
+      <ion-button expand="block" fill="outline" color="danger" (click)="clearTaskData()">
+        <ion-icon name="trash-bin" slot="start"></ion-icon>
+        Limpiar tareas guardadas
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
