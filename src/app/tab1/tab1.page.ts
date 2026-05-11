@@ -21,6 +21,7 @@ import {
   IonRow,
   IonSegment,
   IonSegmentButton,
+  IonSpinner,
   IonTitle,
   IonToolbar,
   ModalController,
@@ -28,7 +29,8 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
-import { Task } from '../models/task.model';
+import { firstValueFrom } from 'rxjs';
+import { Task, TaskStats } from '../models/task.model';
 import { TaskService } from '../services/task.service';
 import { AddTaskModalComponent } from '../components/add-task-modal/add-task-modal.component';
 
@@ -57,6 +59,7 @@ import { AddTaskModalComponent } from '../components/add-task-modal/add-task-mod
     IonRow,
     IonSegment,
     IonSegmentButton,
+    IonSpinner,
     IonTitle,
     IonToolbar,
   ],
@@ -71,7 +74,7 @@ export class Tab1Page {
   activeSection: 'tasks' | 'stats' = 'tasks';
 
   /** Resumen general usado por la tarjeta principal y la vista de estadisticas. */
-  stats = {
+  stats: TaskStats = {
     total: 0,
     completed: 0,
     pending: 0,
@@ -79,6 +82,10 @@ export class Tab1Page {
 
   /** Lista de tareas de prioridad alta destacadas en el Home. */
   priorityTasks: Task[] = [];
+  /** Activa un spinner mientras se consulta la API. */
+  isLoading = false;
+  /** Mensaje visible cuando el backend no responde o devuelve error. */
+  errorMessage = '';
 
   /** Registra iconos y deja lista la pantalla principal para usar datos compartidos. */
   constructor() {
@@ -87,7 +94,7 @@ export class Tab1Page {
 
   /** Recarga los datos del Home cada vez que el usuario entra en la pestana. */
   ionViewWillEnter(): void {
-    this.loadDashboard();
+    void this.loadDashboard();
   }
 
   /** Devuelve el porcentaje de tareas completadas para la vista de estadisticas. */
@@ -127,7 +134,7 @@ export class Tab1Page {
       return;
     }
 
-    this.loadDashboard();
+    await this.loadDashboard();
     await this.presentToast(`Tarea creada: ${data.title}`);
   }
 
@@ -141,13 +148,38 @@ export class Tab1Page {
     void this.router.navigate(['/tabs/tab2']);
   }
 
+  /** Permite reintentar la carga del tablero tras un fallo de red o API. */
+  retryLoad(): void {
+    void this.loadDashboard();
+  }
+
   /** Recoge del servicio el resumen y las tareas prioritarias del Home. */
-  private loadDashboard(): void {
-    this.stats = this.taskService.getStats();
-    this.priorityTasks = this.taskService
-      .getTasksByPriority('alta')
-      .filter((task) => !task.completed)
-      .slice(0, 3);
+  private async loadDashboard(): Promise<void> {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    try {
+      const [stats, priorityTasks] = await Promise.all([
+        firstValueFrom(this.taskService.getStats()),
+        firstValueFrom(this.taskService.getTasksByPriority('alta')),
+      ]);
+
+      this.stats = stats;
+      this.priorityTasks = priorityTasks.filter((task) => !task.completed).slice(0, 3);
+    } catch (error) {
+      this.stats = {
+        total: 0,
+        completed: 0,
+        pending: 0,
+      };
+      this.priorityTasks = [];
+      this.errorMessage = this.buildErrorMessage(
+        error,
+        'No se pudo cargar el panel principal. Revisa la conexion con la API.',
+      );
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   /** Muestra una confirmacion breve tras crear una nueva tarea. */
@@ -160,5 +192,23 @@ export class Tab1Page {
     });
 
     await toast.present();
+  }
+
+  /** Normaliza los mensajes de error mostrados cuando falla una peticion HTTP. */
+  private buildErrorMessage(error: unknown, fallback: string): string {
+    if (typeof error === 'object' && error !== null) {
+      const maybeStatus = 'status' in error ? Number(error.status) : undefined;
+      const maybeBody = 'error' in error ? error.error : undefined;
+
+      if (maybeStatus === 0) {
+        return 'No se pudo conectar con la API. Arranca el backend en http://localhost:3000.';
+      }
+
+      if (typeof maybeBody === 'object' && maybeBody !== null && 'message' in maybeBody) {
+        return String(maybeBody.message);
+      }
+    }
+
+    return fallback;
   }
 }

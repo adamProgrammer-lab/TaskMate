@@ -3,6 +3,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ModalController, ToastController } from '@ionic/angular/standalone';
+import { of } from 'rxjs';
 
 import { Tab1Page } from './tab1.page';
 import { TaskService } from '../services/task.service';
@@ -16,7 +17,13 @@ describe('Tab1Page', () => {
       imports: [Tab1Page],
       providers: [
         provideRouter([]),
-        TaskService,
+        {
+          provide: TaskService,
+          useValue: {
+            getStats: () => of({ total: 0, completed: 0, pending: 0 }),
+            getTasksByPriority: () => of([]),
+          },
+        },
         {
           provide: ModalController,
           useValue: { create: jasmine.createSpy('create') },

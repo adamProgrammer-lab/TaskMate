@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Nueva tarea</ion-title>
     <ion-buttons slot="end">
-      <ion-button [disabled]="taskForm.invalid" (click)="saveTask()">Guardar</ion-button>
+      <ion-button [disabled]="taskForm.invalid || isSaving" (click)="saveTask()">Guardar</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -63,7 +63,17 @@
       </ion-select>
     </ion-item>
 
-    <ion-button expand="block" class="ion-margin-top" type="submit" [disabled]="taskForm.invalid">
+    <div *ngIf="errorMessage" class="form-feedback error-feedback ion-margin-top">
+      {{ errorMessage }}
+    </div>
+
+    <ion-button
+      expand="block"
+      class="ion-margin-top"
+      type="submit"
+      [disabled]="taskForm.invalid || isSaving"
+    >
+      <ion-spinner *ngIf="isSaving" slot="start" name="crescent"></ion-spinner>
       Guardar tarea
     </ion-button>
   </form>

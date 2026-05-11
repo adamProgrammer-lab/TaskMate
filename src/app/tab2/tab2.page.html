@@ -50,14 +50,25 @@
     </ion-button>
   </div>
 
-  <ion-list *ngIf="filteredTasks.length > 0">
+  <div *ngIf="isLoading" class="api-state loading-state ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando tareas desde la API...</p>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="api-state error-state ion-padding">
+    <h3>No se pudieron cargar las tareas</h3>
+    <p>{{ errorMessage }}</p>
+    <ion-button fill="outline" size="small" (click)="retryLoad()">Reintentar</ion-button>
+  </div>
+
+  <ion-list *ngIf="!isLoading && !errorMessage && filteredTasks.length > 0">
     @for (task of filteredTasks; track task.id) {
       <ion-item button detail="true" (click)="goToDetail(task.id)">
         <ion-checkbox
           slot="start"
           [(ngModel)]="task.completed"
           (click)="$event.stopPropagation()"
-          (ngModelChange)="onToggle(task)"
+          (ngModelChange)="onToggle(task, $event)"
         ></ion-checkbox>
         <ion-label [class.completed]="task.completed">
           <h2>{{ task.title }}</h2>
@@ -70,7 +81,10 @@
     }
   </ion-list>
 
-  <div *ngIf="filteredTasks.length === 0" class="empty-state ion-text-center ion-padding">
+  <div
+    *ngIf="!isLoading && !errorMessage && filteredTasks.length === 0"
+    class="empty-state ion-text-center ion-padding"
+  >
     <ion-icon name="clipboard-outline" size="large" color="medium"></ion-icon>
     <h3>No hay tareas</h3>
     <p>Prueba a limpiar filtros o crea una nueva tarea con el boton +.</p>

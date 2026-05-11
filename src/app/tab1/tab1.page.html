@@ -5,121 +5,134 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="welcome-section">
-    <h2>Hola, Developer!</h2>
-    <p>Tienes <strong>{{ stats.pending }} tareas</strong> pendientes.</p>
+  <div *ngIf="isLoading" class="api-state loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando datos desde la API...</p>
   </div>
 
-  <ion-card>
-    <ion-card-content>
-      <ion-grid>
-        <ion-row>
-          <ion-col class="stat-col">
-            <div class="stat-number">{{ stats.total }}</div>
-            <div class="stat-label">Total</div>
-          </ion-col>
-          <ion-col class="stat-col">
-            <div class="stat-number success">{{ stats.completed }}</div>
-            <div class="stat-label">Hechas</div>
-          </ion-col>
-          <ion-col class="stat-col">
-            <div class="stat-number warning">{{ stats.pending }}</div>
-            <div class="stat-label">Pendientes</div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+  <div *ngIf="errorMessage && !isLoading" class="api-state error-state">
+    <h3>No se pudo cargar TaskMate</h3>
+    <p>{{ errorMessage }}</p>
+    <ion-button fill="outline" size="small" (click)="retryLoad()">Reintentar</ion-button>
+  </div>
 
-      <div class="progress-block ion-margin-top">
-        <div class="progress-labels">
-          <small>Progreso del dia</small>
-          <small>{{ completionRate }}%</small>
+  <ng-container *ngIf="!isLoading && !errorMessage">
+    <div class="welcome-section">
+      <h2>Hola, Developer!</h2>
+      <p>Tienes <strong>{{ stats.pending }} tareas</strong> pendientes.</p>
+    </div>
+
+    <ion-card>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col class="stat-col">
+              <div class="stat-number">{{ stats.total }}</div>
+              <div class="stat-label">Total</div>
+            </ion-col>
+            <ion-col class="stat-col">
+              <div class="stat-number success">{{ stats.completed }}</div>
+              <div class="stat-label">Hechas</div>
+            </ion-col>
+            <ion-col class="stat-col">
+              <div class="stat-number warning">{{ stats.pending }}</div>
+              <div class="stat-label">Pendientes</div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <div class="progress-block ion-margin-top">
+          <div class="progress-labels">
+            <small>Progreso del dia</small>
+            <small>{{ completionRate }}%</small>
+          </div>
+          <ion-progress-bar [value]="completionProgress" color="success"></ion-progress-bar>
         </div>
-        <ion-progress-bar [value]="completionProgress" color="success"></ion-progress-bar>
-      </div>
-    </ion-card-content>
-  </ion-card>
+      </ion-card-content>
+    </ion-card>
 
-  <ion-button expand="block" color="primary" class="ion-margin-top" (click)="openAddModal()">
-    <ion-icon name="add" slot="start"></ion-icon>
-    Nueva tarea
-  </ion-button>
+    <ion-button expand="block" color="primary" class="ion-margin-top" (click)="openAddModal()">
+      <ion-icon name="add" slot="start"></ion-icon>
+      Nueva tarea
+    </ion-button>
 
-  <ion-segment
-    class="home-segment ion-margin-top"
-    [value]="activeSection"
-    (ionChange)="onSegmentChange($event)"
-  >
-    <ion-segment-button value="tasks">
-      <ion-label>Urgentes</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="stats">
-      <ion-label>Estadisticas</ion-label>
-    </ion-segment-button>
-  </ion-segment>
+    <ion-segment
+      class="home-segment ion-margin-top"
+      [value]="activeSection"
+      (ionChange)="onSegmentChange($event)"
+    >
+      <ion-segment-button value="tasks">
+        <ion-label>Urgentes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="stats">
+        <ion-label>Estadisticas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
 
-  <ion-list *ngIf="activeSection === 'tasks'" class="recent-tasks ion-margin-top">
-    <ion-list-header>
-      <ion-label>Tareas urgentes</ion-label>
-      <ion-button fill="clear" size="small" (click)="goToTasks()">Ver todas</ion-button>
-    </ion-list-header>
+    <ion-list *ngIf="activeSection === 'tasks'" class="recent-tasks ion-margin-top">
+      <ion-list-header>
+        <ion-label>Tareas urgentes</ion-label>
+        <ion-button fill="clear" size="small" (click)="goToTasks()">Ver todas</ion-button>
+      </ion-list-header>
 
-    @for (task of priorityTasks; track task.id) {
-      <ion-item button detail="true" (click)="goToDetail(task.id)">
-        <ion-label>
-          <h3>{{ task.title }}</h3>
-          <p>{{ task.description || 'Sin descripcion' }}</p>
-        </ion-label>
-        <ion-badge slot="end" color="danger">{{ task.priority }}</ion-badge>
-      </ion-item>
-    } @empty {
+      @for (task of priorityTasks; track task.id) {
+        <ion-item button detail="true" (click)="goToDetail(task.id)">
+          <ion-label>
+            <h3>{{ task.title }}</h3>
+            <p>{{ task.description || 'Sin descripcion' }}</p>
+          </ion-label>
+          <ion-badge slot="end" color="danger">{{ task.priority }}</ion-badge>
+        </ion-item>
+      } @empty {
+        <ion-item>
+          <ion-label>
+            <h3>Sin tareas urgentes</h3>
+            <p>Buen trabajo. No hay tareas de prioridad alta pendientes.</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+
+    <ion-card *ngIf="activeSection === 'stats'" class="ion-margin-top">
+      <ion-card-header>
+        <ion-card-title>Estadisticas de hoy</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col class="stat-col">
+              <div class="stat-number">{{ stats.total }}</div>
+              <div class="stat-label">Total</div>
+            </ion-col>
+            <ion-col class="stat-col">
+              <div class="stat-number">{{ completionRate }}%</div>
+              <div class="stat-label">Completado</div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list *ngIf="activeSection === 'stats'" class="recent-tasks ion-margin-top">
       <ion-item>
         <ion-label>
-          <h3>Sin tareas urgentes</h3>
-          <p>Buen trabajo. No hay tareas de prioridad alta pendientes.</p>
+          <h3>Ritmo actual</h3>
+          <p>{{ stats.completed }} de {{ stats.total }} tareas terminadas.</p>
         </ion-label>
       </ion-item>
-    }
-  </ion-list>
-
-  <ion-card *ngIf="activeSection === 'stats'" class="ion-margin-top">
-    <ion-card-header>
-      <ion-card-title>Estadisticas de hoy</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-      <ion-grid>
-        <ion-row>
-          <ion-col class="stat-col">
-            <div class="stat-number">{{ stats.total }}</div>
-            <div class="stat-label">Total</div>
-          </ion-col>
-          <ion-col class="stat-col">
-            <div class="stat-number">{{ completionRate }}%</div>
-            <div class="stat-label">Completado</div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-list *ngIf="activeSection === 'stats'" class="recent-tasks ion-margin-top">
-    <ion-item>
-      <ion-label>
-        <h3>Ritmo actual</h3>
-        <p>{{ stats.completed }} de {{ stats.total }} tareas terminadas.</p>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        <h3>Foco del dia</h3>
-        <p>{{ stats.pending }} tareas necesitan tu atencion.</p>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        <h3>Categoria sugerida</h3>
-        <p>Revisa primero las tareas de prioridad alta para desbloquear el resto.</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+      <ion-item>
+        <ion-label>
+          <h3>Foco del dia</h3>
+          <p>{{ stats.pending }} tareas necesitan tu atencion.</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h3>Categoria sugerida</h3>
+          <p>Revisa primero las tareas de prioridad alta para desbloquear el resto.</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-container>
 </ion-content>

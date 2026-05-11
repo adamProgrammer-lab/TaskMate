@@ -12,6 +12,26 @@
   }
 }
 
+.api-state {
+  align-items: center;
+  border-radius: 14px;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  margin-top: 12px;
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.loading-state {
+  color: var(--ion-color-medium-shade);
+}
+
+.error-state {
+  background: rgba(var(--ion-color-danger-rgb), 0.08);
+  color: var(--ion-color-danger-shade);
+}
+
 .home-segment {
   background: rgba(var(--ion-color-primary-rgb), 0.08);
   border-radius: 14px;

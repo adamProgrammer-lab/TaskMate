@@ -21,6 +21,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { calendar, codeSlash, school, shieldCheckmark, trashBin } from 'ionicons/icons';
+import { firstValueFrom } from 'rxjs';
 import { TaskService } from '../services/task.service';
 
 @Component({
@@ -66,8 +67,8 @@ export class Tab3Page {
         {
           text: 'Limpiar',
           role: 'destructive',
-          handler: () => {
-            this.taskService.clearAll();
+          handler: async () => {
+            await firstValueFrom(this.taskService.clearAll());
             void this.presentToast();
           },
         },

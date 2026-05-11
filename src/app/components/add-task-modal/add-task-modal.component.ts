@@ -11,15 +11,15 @@ import {
   IonNote,
   IonSelect,
   IonSelectOption,
+  IonSpinner,
   IonTextarea,
   IonTitle,
   IonToolbar,
   ModalController,
 } from '@ionic/angular/standalone';
-import { Task } from '../../models/task.model';
+import { firstValueFrom } from 'rxjs';
+import { Task, TaskPayload } from '../../models/task.model';
 import { TaskService } from '../../services/task.service';
-
-type NewTaskPayload = Omit<Task, 'id' | 'createdAt'>;
 
 @Component({
   selector: 'app-add-task-modal',
@@ -37,6 +37,7 @@ type NewTaskPayload = Omit<Task, 'id' | 'createdAt'>;
     IonNote,
     IonSelect,
     IonSelectOption,
+    IonSpinner,
     IonTextarea,
     IonTitle,
     IonToolbar,
@@ -49,6 +50,10 @@ export class AddTaskModalComponent implements OnInit {
 
   /** Formulario reactivo que centraliza valores y validaciones del modal. */
   taskForm!: FormGroup;
+  /** Controla el estado visual mientras se guarda en la API. */
+  isSaving = false;
+  /** Muestra un mensaje claro si el backend no responde. */
+  errorMessage = '';
 
   /** Inicializa el formulario reactivo con validaciones de negocio basicas. */
   ngOnInit(): void {
@@ -102,21 +107,51 @@ export class AddTaskModalComponent implements OnInit {
   }
 
   /** Guarda la tarea validada en el servicio y devuelve el resultado al componente padre. */
-  saveTask(): void {
+  async saveTask(): Promise<void> {
     if (this.taskForm.invalid) {
       this.taskForm.markAllAsTouched();
       return;
     }
 
-    const formValue = this.taskForm.getRawValue() as Omit<NewTaskPayload, 'completed'>;
-    const task = this.taskService.addTask({
-      ...formValue,
-      title: formValue.title.trim(),
-      description: formValue.description?.trim() || undefined,
-      category: formValue.category?.trim() || undefined,
-      completed: false,
-    });
+    this.isSaving = true;
+    this.errorMessage = '';
 
-    void this.modalController.dismiss(task, 'confirm');
+    try {
+      const formValue = this.taskForm.getRawValue() as Omit<TaskPayload, 'completed'>;
+      const task = await firstValueFrom(this.taskService.addTask({
+        ...formValue,
+        title: formValue.title.trim(),
+        description: formValue.description?.trim() || undefined,
+        category: formValue.category?.trim() || undefined,
+        completed: false,
+      }));
+
+      void this.modalController.dismiss(task, 'confirm');
+    } catch (error) {
+      this.errorMessage = this.buildErrorMessage(
+        error,
+        'No se pudo guardar la tarea. Comprueba que la API este encendida.',
+      );
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  /** Normaliza el mensaje mostrado cuando falla una peticion HTTP. */
+  private buildErrorMessage(error: unknown, fallback: string): string {
+    if (typeof error === 'object' && error !== null) {
+      const maybeStatus = 'status' in error ? Number(error.status) : undefined;
+      const maybeBody = 'error' in error ? error.error : undefined;
+
+      if (maybeStatus === 0) {
+        return 'No se pudo conectar con la API. Revisa que el backend este arrancado en el puerto 3000.';
+      }
+
+      if (typeof maybeBody === 'object' && maybeBody !== null && 'message' in maybeBody) {
+        return String(maybeBody.message);
+      }
+    }
+
+    return fallback;
   }
 }

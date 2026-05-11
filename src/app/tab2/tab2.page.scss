@@ -11,6 +11,25 @@
   place-content: center;
 }
 
+.api-state {
+  align-items: center;
+  border-radius: 14px;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  margin: 8px 12px 0;
+  text-align: center;
+}
+
+.loading-state {
+  color: var(--ion-color-medium-shade);
+}
+
+.error-state {
+  background: rgba(var(--ion-color-danger-rgb), 0.08);
+  color: var(--ion-color-danger-shade);
+}
+
 ion-searchbar {
   padding: 12px 12px 4px;
 }

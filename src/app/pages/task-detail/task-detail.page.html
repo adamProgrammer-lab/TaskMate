@@ -12,31 +12,42 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" *ngIf="task; else taskNotFound">
-  <ion-badge [color]="getPriorityColor(task)">
-    {{ task.priority | uppercase }}
-  </ion-badge>
-  <h1 class="detail-title ion-margin-top">{{ task.title }}</h1>
-  <p class="detail-description">{{ task.description || 'Sin descripcion' }}</p>
-  <ion-note>Creada el {{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</ion-note>
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading" class="state-panel">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando detalle desde la API...</p>
+  </div>
 
-  <ion-button
-    expand="block"
-    class="ion-margin-top"
-    [color]="task.completed ? 'medium' : 'success'"
-    (click)="toggleComplete()"
-  >
-    <ion-icon [name]="task.completed ? 'refresh' : 'checkmark'" slot="start"></ion-icon>
-    {{ task.completed ? 'Marcar como pendiente' : 'Marcar como completada' }}
-  </ion-button>
-</ion-content>
+  <div *ngIf="errorMessage && !isLoading" class="state-panel state-panel-error">
+    <h2>No se pudo cargar la tarea</h2>
+    <p>{{ errorMessage }}</p>
+    <ion-button fill="outline" (click)="retryLoad()">Reintentar</ion-button>
+  </div>
 
-<ng-template #taskNotFound>
-  <ion-content class="ion-padding">
-    <div class="empty-detail">
+  <ng-container *ngIf="!isLoading && !errorMessage && task; else taskNotFound">
+    <ion-badge [color]="getPriorityColor(task)">
+      {{ task.priority | uppercase }}
+    </ion-badge>
+    <h1 class="detail-title ion-margin-top">{{ task.title }}</h1>
+    <p class="detail-description">{{ task.description || 'Sin descripcion' }}</p>
+    <ion-note>Creada el {{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</ion-note>
+
+    <ion-button
+      expand="block"
+      class="ion-margin-top"
+      [color]="task.completed ? 'medium' : 'success'"
+      (click)="toggleComplete()"
+    >
+      <ion-icon [name]="task.completed ? 'refresh' : 'checkmark'" slot="start"></ion-icon>
+      {{ task.completed ? 'Marcar como pendiente' : 'Marcar como completada' }}
+    </ion-button>
+  </ng-container>
+
+  <ng-template #taskNotFound>
+    <div *ngIf="!isLoading && !errorMessage" class="empty-detail">
       <h2>Tarea no encontrada</h2>
       <p>La tarea que intentas abrir ya no esta disponible.</p>
       <ion-button routerLink="/tabs/tab2">Volver a tareas</ion-button>
     </div>
-  </ion-content>
-</ng-template>
+  </ng-template>
+</ion-content>

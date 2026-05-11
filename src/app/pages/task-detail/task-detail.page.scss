@@ -8,6 +8,19 @@
   line-height: 1.5;
 }
 
+.state-panel {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  padding-top: 48px;
+  text-align: center;
+}
+
+.state-panel-error {
+  color: var(--ion-color-danger-shade);
+}
+
 .empty-detail {
   display: grid;
   gap: 12px;

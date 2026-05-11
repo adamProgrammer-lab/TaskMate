@@ -4,6 +4,8 @@
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
+    "api:dev": "npm --prefix taskmate-api run dev",
+    "api:start": "npm --prefix taskmate-api run start",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
